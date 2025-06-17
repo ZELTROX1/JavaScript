@@ -5,7 +5,7 @@ let isSessionActive = false;
 let selectedFiles = [];
 
 // API base URL - update this to your backend URL
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'http://dev.data.rewardsy.one';
 
 // Tab switching functionality
 function switchTab(tabName, event) {
