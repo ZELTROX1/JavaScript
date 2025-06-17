@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Agent - Smart Document Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="header">
+                <h1>RAG Agent</h1>
+                <p>Smart Document Chat System</p>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('business', event)">Business</button>
+                <button class="tab" onclick="switchTab('user', event)">User</button>
+            </div>
+            
+            <!-- Business Tab -->
+            <div id="business-tab" class="tab-content">
+                <div class="input-group">
+                    <label for="businessId">Business ID</label>
+                    <input type="text" id="businessId" placeholder="Enter your business ID">
+                </div>
+                
+                <div class="input-group">
+                    <label for="category">Document Category</label>
+                    <select id="category">
+                        <option value="general">General</option>
+                        <option value="policy">Policy</option>
+                        <option value="manual">Manual</option>
+                        <option value="faq">FAQ</option>
+                        <option value="product">Product</option>
+                    </select>
+                </div>
+                
+                <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                    <input type="file" id="fileInput" multiple accept=".txt,.md,.doc,.docx,.pdf">
+                    <div class="upload-icon">📄</div>
+                    <p><strong>Click to upload</strong> or drag and drop</p>
+                    <p>Supports: TXT, MD, DOC, DOCX, PDF</p>
+                </div>
+                
+                <div id="fileList" class="file-list"></div>
+                
+                <button class="btn" onclick="uploadDocuments()" id="uploadBtn">
+                    Upload Documents
+                </button>
+            </div>
+            
+            <!-- User Tab -->
+            <div id="user-tab" class="tab-content" style="display: none;">
+                <div class="input-group">
+                    <label for="userBusinessId">Business ID</label>
+                    <input type="text" id="userBusinessId" placeholder="Enter business ID to chat with">
+                </div>
+                
+                <div class="input-group">
+                    <label for="userId">Your User ID</label>
+                    <input type="text" id="userId" placeholder="Enter your user ID">
+                </div>
+                
+                <div class="input-group">
+                    <label for="searchType">Search Type</label>
+                    <select id="searchType">
+                        <option value="hybrid">Hybrid Search</option>
+                        <option value="vector">Vector Search</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="startChatSession()" id="startChatBtn">
+                    Start Chat Session
+                </button>
+                
+                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px; border: 1px solid #e9ecef;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span class="status-indicator" id="sessionStatus"></span>
+                        <strong>Session Status</strong>
+                    </div>
+                    <div id="sessionInfo" class="session-info">No active session</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Area -->
+        <div class="chat-area" id="chatArea" style="display: none;">
+            <div class="chat-header">
+                <h2>Document Chat</h2>
+                <div class="session-info" id="chatSessionInfo">Start a session to begin chatting</div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="loading">
+                    <p>👋 Welcome! Upload documents as a business or start a chat session as a user to begin.</p>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="chat-input-group">
+                    <input type="text" id="messageInput" placeholder="Type your message..." disabled>
+                    <button class="send-btn" onclick="sendMessage()" id="sendBtn" disabled>
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
