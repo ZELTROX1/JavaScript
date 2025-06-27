@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #B6B09F;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -15,9 +15,9 @@ body {
 }
 
 .container {
-    background: white;
+    background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     max-width: 1200px;
     width: 100%;
@@ -27,8 +27,8 @@ body {
 
 .sidebar {
     width: 350px;
-    background: #f8f9fa;
-    border-right: 1px solid #e9ecef;
+    background: #fafafa;
+    border-right: 1px solid #e5f3ff;
     display: flex;
     flex-direction: column;
 }
@@ -39,8 +39,8 @@ body {
 
 .header {
     padding: 20px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: #F2F2F2;
+    color: #222;
 }
 
 .header h1 {
@@ -56,8 +56,8 @@ body {
 
 .tabs {
     display: flex;
-    background: #fff;
-    border-bottom: 1px solid #e9ecef;
+    background: #fafafa;
+    border-bottom: 1px solid #e5f3ff;
 }
 
 .tab {
@@ -70,28 +70,22 @@ body {
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
+    color: #333;
 }
 
 .tab.active {
-    background: #667eea;
-    color: white;
+    background: #E8C999;
+    color: #222;
 }
 
 .tab:hover:not(.active) {
-    background: #f8f9fa;
+    background: #f0f7ff;
 }
 
 .tab-content {
     flex: 1;
     padding: 20px;
-}
-@media screen and (min-width: 769px) {
-  #business-tab {
-    overflow-y: auto;
-  }
-}
-#user-tab{
-    overflow-y: auto;
+    background: #fff5e5;
 }
 
 .input-group {
@@ -102,42 +96,44 @@ body {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #495057;
+    color: #000000;
 }
 
 .input-group input,
 .input-group select {
     width: 100%;
     padding: 12px;
-    border: 2px solid #e9ecef;
+    border: 2px solid #e5f3ff;
     border-radius: 10px;
     font-size: 14px;
     transition: border-color 0.3s ease;
+    background: #f6f6f6;
 }
 
 .input-group input:focus,
 .input-group select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #E8C999;
+    background: #fff;
 }
 
 .file-upload {
-    border: 2px dashed #667eea;
+    border: 2px dashed #e5f3ff;
     border-radius: 10px;
     padding: 30px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: #f8f9ff;
+    background: #e5f3ff;
 }
 
 .file-upload:hover {
-    background: #e8eeff;
+    background: #f0f7ff;
 }
 
 .file-upload.dragover {
-    border-color: #764ba2;
-    background: #f0f4ff;
+    border-color: #E8C999;
+    background: #f0f7ff;
 }
 
 .file-upload input {
@@ -146,13 +142,13 @@ body {
 
 .file-upload .upload-icon {
     font-size: 48px;
-    color: #667eea;
+    color: #b0b0b0;
     margin-bottom: 10px;
 }
 
 .btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: #E8C999;
+    color: #222;
     border: none;
     padding: 12px 24px;
     border-radius: 10px;
@@ -164,8 +160,9 @@ body {
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    background: #fbf6ef;
+    color: #222;
+    box-shadow: 0 5px 15px rgba(229, 252, 242, 0.2);
 }
 
 .btn:disabled {
@@ -178,12 +175,13 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    background: #f7f7f7;
 }
 
 .chat-header {
     padding: 20px;
-    border-bottom: 1px solid #e9ecef;
-    background: white;
+    border-bottom: 1px solid #e5f3ff;
+    background: #f0f7ff;
 }
 
 .chat-header h2 {
@@ -201,7 +199,7 @@ body {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    background: #f8f9fa;
+    background: #f7f7f7;
 }
 
 .message {
@@ -222,15 +220,15 @@ body {
 }
 
 .message.user .message-content {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: #E8C999;
+    color: #222;
 }
 
 .message.bot .message-content,
 .message.assistant .message-content {
-    background: white;
-    border: 1px solid #e9ecef;
-    color: #495057;
+    background: #f0f7ff;
+    border: 1px solid #e5f3ff;
+    color: #222;
 }
 
 .message-avatar {
@@ -243,17 +241,18 @@ body {
     font-weight: bold;
     font-size: 12px;
     margin: 0 10px;
+    background: #fff;
 }
 
 .message.user .message-avatar {
-    background: #667eea;
-    color: white;
+    background: #E8C999;
+    color: #222;
 }
 
 .message.bot .message-avatar,
 .message.assistant .message-avatar {
-    background: #6c757d;
-    color: white;
+    background: #f0f7ff;
+    color: #222;
 }
 
 .chat-input {
@@ -383,4 +382,37 @@ body {
         width: 100%;
         height: 50%;
     }
+}
+
+.web-input {
+    margin-bottom: 20px;
+}
+.web-input label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #000000;
+}
+.web-input input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    background: #f8f9ff;
+}
+.web-input input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+}
+
+@media screen and (min-width: 769px) {
+  #business-tab {
+    overflow-y: auto;
+  }
+}
+#user-tab{
+    overflow-y: auto;
 }

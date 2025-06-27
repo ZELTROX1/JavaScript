@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAG Agent - Smart Document Chat</title>
+    <title>Rewardsy Agent</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
         <div class="sidebar">
             <div class="header">
                 <h1>RAG Agent</h1>
-                <p>Smart Document Chat System</p>
+                <p class="subtitle">Smart Document Chat System</p>
             </div>
             
             <div class="tabs">
@@ -36,6 +36,11 @@
                         <option value="product">Product</option>
                     </select>
                 </div>
+
+                <div class="web-input" class="tab-content">
+                    <label for="website">Website Url</label>
+                    <input type="text" id="website-url" placeholder="Enter your simap.xml web url">
+                </div>
                 
                 <div class="file-upload" onclick="document.getElementById('fileInput').click()">
                     <input type="file" id="fileInput" multiple accept=".txt,.md,.doc,.docx,.pdf">
@@ -47,11 +52,10 @@
                 <div id="fileList" class="file-list"></div>
                 
                 <button class="btn" onclick="uploadDocuments()" id="uploadBtn">
-                    Upload Documents
+                    Create Business
                 </button>
             </div>
             
-            <!-- User Tab -->
             <div id="user-tab" class="tab-content" style="display: none;">
                 <div class="input-group">
                     <label for="userBusinessId">Business ID</label>
@@ -94,7 +98,7 @@
             
             <div class="chat-messages" id="chatMessages">
                 <div class="loading">
-                    <p>👋 Welcome! Upload documents as a business or start a chat session as a user to begin.</p>
+                    <p>👋 Welcome! Rewardsy Agent</p>
                 </div>
             </div>
             

@@ -5,7 +5,7 @@ let isSessionActive = false;
 let selectedFiles = [];
 
 // API base URL - update this to your backend URL
-const API_BASE = 'http://dev.data.rewardsy.one';
+const API_BASE = 'https://dev.app.rewardsy.one/rewardsy-data';
 
 // Tab switching functionality
 function switchTab(tabName, event) {
@@ -58,7 +58,6 @@ function showNotification(message, type = 'success') {
     }
 }
 
-// Utility function to format file sizes
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -67,39 +66,45 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// File management functions
+// Add a file count indicator
+function updateFileCountIndicator() {
+    let indicator = document.getElementById('fileCountIndicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'fileCountIndicator';
+        indicator.style = 'margin-bottom: 10px; color: #495057; font-size: 13px;';
+        const fileList = document.getElementById('fileList');
+        if (fileList) fileList.parentNode.insertBefore(indicator, fileList);
+    }
+    indicator.textContent = selectedFiles.length > 0 ? `${selectedFiles.length} file(s) selected` : 'No files selected';
+}
+
 function displayFileList() {
     const fileList = document.getElementById('fileList');
     if (!fileList) return;
-    
     fileList.innerHTML = '';
-    
     selectedFiles.forEach((file, index) => {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
-        
-        // Create elements safely
         const fileInfo = document.createElement('div');
         const fileName = document.createElement('div');
         fileName.className = 'file-name';
         fileName.textContent = file.name; // Safe text content
-        
         const fileSize = document.createElement('div');
         fileSize.className = 'file-size';
         fileSize.textContent = formatFileSize(file.size);
-        
         fileInfo.appendChild(fileName);
         fileInfo.appendChild(fileSize);
-        
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'Remove';
         removeBtn.style.cssText = 'background: #dc3545; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer;';
         removeBtn.addEventListener('click', () => removeFile(index));
-        
         fileItem.appendChild(fileInfo);
         fileItem.appendChild(removeBtn);
         fileList.appendChild(fileItem);
     });
+    updateFileCountIndicator();
+    console.log('Selected files:', selectedFiles);
 }
 
 function removeFile(index) {
@@ -107,24 +112,52 @@ function removeFile(index) {
     displayFileList();
 }
 
-// Document upload functionality
+// Function to scrape and ingest website content
+async function scrapeAndIngestWebsite(businessId, websiteUrl) {
+    try {
+        const response = await fetch(`${API_BASE}/vector_search/scrape-and-ingest`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                business_id: businessId,
+                websitemap_url: websiteUrl
+            })
+        });
+        const result = await response.json();
+        if (response.ok && result.success) {
+            showNotification(`Website scraped and ingested successfully! URLs crawled: ${result.urls_crawled || 0}`);
+        } else {
+            showNotification(result.message || 'Website scrape/ingest failed', 'error');
+        }
+    } catch (error) {
+        showNotification('Network error (website scrape): ' + error.message, 'error');
+    }
+}
+
 async function uploadDocuments() {
     const businessIdInput = document.getElementById('businessId');
     const categoryInput = document.getElementById('category');
+    const websiteInput  = document.getElementById('website-url');
     
-    if (!businessIdInput || !categoryInput) {
+    if (!businessIdInput || !categoryInput || !websiteInput) {
         showNotification('Required form elements not found', 'error');
         return;
     }
     
     const businessId = businessIdInput.value.trim();
+    const websiteUrl = websiteInput.value.trim();
     const category = categoryInput.value || 'general';
     
     if (!businessId) {
         showNotification('Please enter a business ID', 'error');
         return;
     }
-    
+    if (!websiteUrl) {
+        showNotification('Please enter a website URL', 'error');
+        return;
+    }
     if (selectedFiles.length === 0) {
         showNotification('Please select files to upload', 'error');
         return;
@@ -137,32 +170,28 @@ async function uploadDocuments() {
     }
     
     try {
+        // 1. Scrape and ingest website
+        await scrapeAndIngestWebsite(businessId, websiteUrl);
+        // 2. Upload documents
         const formData = new FormData();
         formData.append('business_id', businessId);
         formData.append('category', category);
-        
         selectedFiles.forEach(file => {
             formData.append('files', file);
         });
-        
+
         const response = await fetch(`${API_BASE}/vector_search/documents/upload`, {
             method: 'POST',
-            body: formData
-        });
-        
+            body: formData        });
         if (!response.ok && response.status >= 500) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-        
+            throw new Error(`Server error: ${response.status}`);        }
         const result = await response.json();
-        
         if (response.ok && result.success) {
             const count = result.processed_documents || 0;
             showNotification(`Successfully uploaded ${count} documents!`);
             selectedFiles = [];
             displayFileList();
             businessIdInput.value = '';
-            
             // Reset the file input element so subsequent uploads work
             const fileInput = document.getElementById('fileInput');
             if (fileInput) {
@@ -176,7 +205,7 @@ async function uploadDocuments() {
     } finally {
         if (uploadBtn) {
             uploadBtn.disabled = false;
-            uploadBtn.textContent = 'Upload Documents';
+            uploadBtn.textContent = 'Create Business';
         }
     }
 }
@@ -329,18 +358,19 @@ async function loadChatHistory() {
 function addMessageToChat(content, role) {
     const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) return;
-    
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role}`;
-    
-    const avatar = role === 'user' ? 'U' : 'AI';
-    
+    let avatarHtml = '';
+    if (role === 'assistant') {
+        avatarHtml = `<div class="message-avatar" style="background:#000;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;padding:2px;"><img src="images/logo.png" alt="AI Logo" style="width:28px;height:28px;border-radius:50%;object-fit:cover;background:#000;"></div>`;
+    } else if (role === 'user') {
+        avatarHtml = `<div class="message-avatar"><img src="https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small_2x/user-profile-icon-free-vector.jpg" alt="User Logo" style="width:32px;height:32px;border-radius:50%;object-fit:cover;"></div>`;
+    }
     messageDiv.innerHTML = `
-        ${role === 'assistant' ? `<div class="message-avatar">${avatar}</div>` : ''}
+        ${role === 'assistant' ? avatarHtml : ''}
         <div class="message-content">${escapeHtml(content)}</div>
-        ${role === 'user' ? `<div class="message-avatar">${avatar}</div>` : ''}
+        ${role === 'user' ? avatarHtml : ''}
     `;
-    
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -402,7 +432,7 @@ async function sendMessage() {
     }
     
     try {
-        const response = await fetch(`${API_BASE}/rag-agent/chat/async`, {
+        const response = await fetch(`${API_BASE}/rag-agent/chat`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -456,22 +486,28 @@ document.addEventListener('DOMContentLoaded', function() {
         fileInput.addEventListener('change', function(e) {
             selectedFiles = Array.from(e.target.files);
             displayFileList();
+            console.log('File input changed:', selectedFiles);
         });
     }
-
-    // Drag and drop handling
+    // Click on file-upload area triggers file input
     const fileUpload = document.querySelector('.file-upload');
-    if (fileUpload) {
+    if (fileUpload && fileInput) {
+        fileUpload.addEventListener('click', function(e) {
+            // Only trigger if the click is not on the input itself
+            if (e.target !== fileInput) {
+                fileInput.value = '';
+                fileInput.click();
+            }
+        });
+        // Drag and drop handling
         fileUpload.addEventListener('dragover', function(e) {
             e.preventDefault();
             this.classList.add('dragover');
         });
-        
         fileUpload.addEventListener('dragleave', function(e) {
             e.preventDefault();
             this.classList.remove('dragover');
         });
-        
         fileUpload.addEventListener('drop', function(e) {
             e.preventDefault();
             this.classList.remove('dragover');
@@ -479,6 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (files) {
                 selectedFiles = Array.from(files);
                 displayFileList();
+                console.log('Files dropped:', selectedFiles);
             }
         });
     }
